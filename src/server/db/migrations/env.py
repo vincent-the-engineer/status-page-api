@@ -67,7 +67,6 @@ def run_migrations_online() -> None:
     # Get the URL from an environment variable, 
     # falling back to the .ini file if not set
     url = os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
-    print(url)
     configuration = config.get_section(config.config_ini_section, {})
     configuration["sqlalchemy.url"] = url
     connectable = engine_from_config(
