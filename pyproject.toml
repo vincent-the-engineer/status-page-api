@@ -17,3 +17,7 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/server", "src/client"]
+
+[project.scripts]
+server = "server.main:main"
+client = "client.main:main"
