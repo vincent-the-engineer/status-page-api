@@ -310,17 +310,23 @@ source = { editable = "." }
 dependencies = [
     { name = "alembic" },
     { name = "psycopg", extra = ["binary"] },
-    { name = "pytest" },
     { name = "sqlalchemy" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "alembic", specifier = ">=1.18.4" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.3.4" },
-    { name = "pytest", specifier = "==9.0.3" },
     { name = "sqlalchemy", specifier = "==2.0.49" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=9.0.3" }]
 
 [[package]]
 name = "typing-extensions"
