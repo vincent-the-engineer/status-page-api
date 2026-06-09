@@ -15,7 +15,7 @@ def init_db(database_url: str) -> None:
         atexit.register(db_engine.dispose)
         print("Database engine initialised.")
     else:
-        print("Engine is already initialised.")
+        print("Engine is already initialised.")        
 
     global SessionFactory
     if SessionFactory is None:
