@@ -1,5 +1,7 @@
 from collections.abc import Iterator
 import os
+import sys
+from pathlib import Path
 
 import pytest
 from alembic.config import Config
@@ -14,21 +16,30 @@ import server.db.database as db
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_and_teardown_database():
+    project_root = Path(__file__).resolve().parent.parent.parent
+    ini_path = project_root / "alembic.ini"
+
     # ---- SETUP ----
     TEST_DATABASE_URL = os.getenv("DATABASE_URL")
     db.init_db(TEST_DATABASE_URL)
     assert db.db_engine is not None
-    alembic_cfg = Config("alembic.ini")
-    alembic_cfg.set_main_option("sqlalchemy.url", TEST_DATABASE_URL)    
+    alembic_cfg = Config(str(ini_path))
+    alembic_cfg.set_main_option("sqlalchemy.url", TEST_DATABASE_URL)
+
+    # Share connection with Alembic    
     # Run the migrations up to the latest version
-    command.upgrade(alembic_cfg, "head")
+    with db.db_engine.begin() as connection:
+        alembic_cfg.attributes["connection"] = connection
+        command.upgrade(alembic_cfg, "head")    
     print("\n[Setup] Database opened and tables created.")
 
     yield
     
     # ---- TEARDOWN ----
     # Rollback all migrations after the test session finishes
-    command.downgrade(alembic_cfg, "base")
+    with db.db_engine.begin() as connection:
+        alembic_cfg.attributes["connection"] = connection
+        command.downgrade(alembic_cfg, "base")
     db.db_engine.dispose()
     print("\n[Teardown] Database tables dropped and connections closed.")
 
