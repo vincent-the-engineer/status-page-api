@@ -19,6 +19,8 @@ def test_find_user_by_email(db_session):
     db_session.flush()
     user = find_user_by_email(db_session, email)
     assert user is not None and user.email == email and user.api_key == api_key
+    user2 = find_user_by_email(db_session, "jane@example.org")
+    assert user2 is None
 
 def test_insert_user(db_session):
     query = select(func.count()).select_from(User)
