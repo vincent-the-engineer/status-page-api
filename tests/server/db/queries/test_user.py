@@ -3,10 +3,22 @@ from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
 
 from server.db.queries.user import (
+    find_user_by_email,
     insert_user,
 )
 from server.db.schema.tables.user import User
 
+
+def test_find_user_by_email(db_session):
+    email = "john.doe@example.com"
+    api_key = "1234567"
+    user = find_user_by_email(db_session, email)
+    assert user is None
+    new_user = User(email=email, api_key=api_key)
+    db_session.add(new_user)
+    db_session.flush()
+    user = find_user_by_email(db_session, email)
+    assert user is not None and user.email == email and user.api_key == api_key
 
 def test_insert_user(db_session):
     query = select(func.count()).select_from(User)
