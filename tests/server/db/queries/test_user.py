@@ -46,8 +46,4 @@ def test_insert_user_duplicated_email(db_session):
 
     api_key2 = "xyz"
     with pytest.raises(IntegrityError):
-        try:
-            inserted_user2 = insert_user(db_session, email, api_key2)
-        except IntegrityError:
-            db_session.rollback()
-            raise
+        inserted_user2 = insert_user(db_session, email, api_key2)
