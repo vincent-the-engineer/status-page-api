@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import UUID, String
+from sqlalchemy import UUID, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql.expression import func
 
@@ -11,7 +11,6 @@ from server.db.schema.base import Base
 # RFC 5321 specifies email address must fit within 256 characters
 # that includes "<" and ">".
 MAX_EMAIL_LENGTH = 254
-SHA256_HASH_LENGTH = 64
 
 class User(Base):
     __tablename__ = "users"
@@ -25,8 +24,8 @@ class User(Base):
         nullable=False,
         unique=True,
     )
-    # SHA-256 hash
-    api_key: Mapped[str] = mapped_column(String(SHA256_HASH_LENGTH))
+    # Hash of the API key
+    api_key: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(
         server_default=func.now(),
     )
