@@ -6,3 +6,9 @@ _ph = PasswordHasher()
 
 def hash_api_key(api_key: str) -> str:
     return _ph.hash(api_key)
+
+def verify_api_key(api_key: str, hash: str) -> bool:
+    try:
+        return _ph.verify(hash, api_key)
+    except VerifyMismatchError:
+        return False
