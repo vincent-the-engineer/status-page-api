@@ -1,12 +1,17 @@
-from server.db.schema.tables.user import SHA256_HASH_LENGTH
+from server.db.schema.tables.user import (
+    User,
+)
 from server.utils.auth import (
     hash_api_key,
+    verify_api_key,
 )
 
 
-def test_hash_api_key():
-    hash = hash_api_key("test-key")
-    assert hash == (
-        "62af8704764faf8ea82fc61ce9c4c3908b6cb97d463a634e9e587d7c885db0ef"
-    )
-    assert len(hash) == SHA256_HASH_LENGTH
+def test_hash_and_verify_api_key():
+    api_key = "test-key"
+    hash = hash_api_key(api_key)
+    assert hash.startswith("$argon2")
+    assert api_key not in hash
+    assert verify_api_key(api_key, hash) is True
+    wrong_api_key = "test-key2"
+    assert verify_api_key(wrong_api_key, hash) is False
