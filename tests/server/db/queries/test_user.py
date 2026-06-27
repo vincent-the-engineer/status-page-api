@@ -7,6 +7,9 @@ from server.db.queries.user import (
     insert_user,
 )
 from server.db.schema.tables.user import User
+from server.utils.auth import (
+    verify_api_key,
+)
 
 
 def test_find_user_by_email(db_session):
@@ -32,7 +35,7 @@ def test_insert_user(db_session):
     inserted_user = insert_user(db_session, email, api_key)
     assert inserted_user.id is not None
     assert inserted_user.email == email
-    assert inserted_user.api_key == api_key
+    assert verify_api_key(api_key, inserted_user.api_key)
     assert inserted_user.created_at is not None
     assert inserted_user.updated_at is not None
 
@@ -54,7 +57,7 @@ def test_insert_user_duplicated_email(db_session):
     inserted_user = insert_user(db_session, email, api_key1)
     assert inserted_user.id is not None
     assert inserted_user.email == email
-    assert inserted_user.api_key == api_key1
+    assert verify_api_key(api_key1, inserted_user.api_key)
     assert inserted_user.created_at is not None
     assert inserted_user.updated_at is not None
 
