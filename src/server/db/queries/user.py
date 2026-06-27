@@ -2,6 +2,9 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
 from server.db.schema.tables.user import User
+from server.utils.auth import (
+    hash_api_key,
+)
 
 
 def find_user_by_email(session: Session, email: str) -> User:
@@ -12,7 +15,8 @@ def find_user_by_email(session: Session, email: str) -> User:
     return user
 
 def insert_user(session: Session, email: str, api_key: str) -> User:
-    new_user = User(email=email, api_key=api_key)
+    hash = hash_api_key(api_key)
+    new_user = User(email=email, api_key=hash)
     session.add(new_user)
     session.flush()
     return new_user
