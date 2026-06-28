@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from server.db.schema.tables.user import User
 from server.utils.auth import (
     hash_api_key,
+    verify_api_key,
 )
 
 
@@ -20,3 +21,6 @@ def insert_user(session: Session, email: str, api_key: str) -> User:
     session.add(new_user)
     session.flush()
     return new_user
+
+def verify_user(user: User, api_key: str) -> bool:
+    return verify_api_key(api_key, user.api_key)
