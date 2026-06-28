@@ -5,9 +5,11 @@ from sqlalchemy.exc import IntegrityError
 from server.db.queries.user import (
     find_user_by_email,
     insert_user,
+    verify_user,
 )
 from server.db.schema.tables.user import User
 from server.utils.auth import (
+    hash_api_key,
     verify_api_key,
 )
 
@@ -64,3 +66,12 @@ def test_insert_user_duplicated_email(db_session):
     api_key2 = "xyz"
     with pytest.raises(IntegrityError):
         inserted_user2 = insert_user(db_session, email, api_key2)
+
+def test_verify_user(db_session):
+    email = "john.doe@example.com"
+    api_key = "1234567"
+    new_user = User(email=email, api_key=hash_api_key(api_key))
+    db_session.add(new_user)
+    db_session.flush()
+    assert verify_user(new_user, api_key) is True
+    assert verify_user(new_user, "wrong key") is False
