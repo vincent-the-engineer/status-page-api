@@ -3,6 +3,7 @@ from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
 
 from server.db.queries.user import (
+    delete_user_by_email,
     find_user_by_email,
     insert_user,
     verify_user,
@@ -13,6 +14,23 @@ from server.utils.auth import (
     verify_api_key,
 )
 
+
+def test_delete_user_by_email(db_session):
+    email = "john.doe@example.com"
+    api_key = "1234567"
+    queried_user = db_session.query(User).filter_by(email=email).first()
+    assert queried_user is None
+
+    new_user = User(email=email, api_key=api_key)
+    db_session.add(new_user)
+    db_session.flush()
+    queried_user = db_session.query(User).filter_by(email=email).first()
+    assert queried_user is not None
+    assert queried_user.email == email
+
+    delete_user_by_email(db_session, email)
+    queried_user = db_session.query(User).filter_by(email=email).first()
+    assert queried_user is None
 
 def test_find_user_by_email(db_session):
     email = "john.doe@example.com"
