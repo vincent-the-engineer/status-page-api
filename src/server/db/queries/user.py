@@ -1,4 +1,4 @@
-from sqlalchemy import select, func
+from sqlalchemy import select, delete, func
 from sqlalchemy.orm import Session
 
 from server.db.schema.tables.user import User
@@ -7,6 +7,13 @@ from server.utils.auth import (
     verify_api_key,
 )
 
+
+def delete_user_by_email(session: Session, email: str) -> None:
+    query = delete(User).where(
+        func.lower(User.email) == func.lower(email)
+    )
+    session.execute(query)
+    session.flush()
 
 def find_user_by_email(session: Session, email: str) -> User:
     query = select(User).where(
