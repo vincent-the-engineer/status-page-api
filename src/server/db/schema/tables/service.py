@@ -19,15 +19,15 @@ class Service(Base):
         ForeignKey("users.id", ondelete="CASCADE"),
     )
     owner: Mapped["User"] = relationship()
-    dependencies: Mapped[list["Service"]] = relationship(
-        "Service",
-        secondary="service_dependencies",
-        primaryjoin="Service.id == service_dependencies.c.service_id",
-        secondaryjoin="Service.id == service_dependencies.c.dependency_id",
-        backref="required_by",
-        # Ensures the entries in the association table are cleaned up
-        cascade="all, delete",
-    )    
+    # dependencies: Mapped[list["Service"]] = relationship(
+    #     "Service",
+    #     secondary="service_dependencies",
+    #     primaryjoin="Service.id == service_dependencies.c.service_id",
+    #     secondaryjoin="Service.id == service_dependencies.c.dependency_id",
+    #     backref="required_by",
+    #     # Ensures the entries in the association table are cleaned up
+    #     cascade="all, delete",
+    # )    
     created_at: Mapped[datetime] = mapped_column(
         server_default=func.now(),
     )
