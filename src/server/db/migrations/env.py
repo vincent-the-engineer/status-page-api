@@ -8,6 +8,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from server.db.schema.base import Base
+from server.db.schema.tables.reported_status import ReportedStatus
 from server.db.schema.tables.user import User
 from server.db.schema.tables.service import Service
 
