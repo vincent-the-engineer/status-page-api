@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from server.db.schema.base import Base
 
 
-MAX_NAME_LENGTH = 100
+_MAX_NAME_LENGTH = 100
 
 class ReportedStatus(Base):
     __tablename__ = "reported_status"
@@ -13,12 +13,12 @@ class ReportedStatus(Base):
         primary_key=True,
     )
     code: Mapped[str] = mapped_column(
-        String(MAX_NAME_LENGTH),
+        String(_MAX_NAME_LENGTH),
         nullable=False,
         unique=True,
     )
     name: Mapped[str] = mapped_column(
-        String(MAX_NAME_LENGTH),
+        String(_MAX_NAME_LENGTH),
         nullable=False,
         unique=True,
     )
