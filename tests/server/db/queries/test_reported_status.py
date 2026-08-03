@@ -31,3 +31,15 @@ def test_initialise_reported_status(db_session):
     assert statuses[1].id == DEGRADED_STATUS_ID and statuses[1].code == DEGRADED_STATUS_CODE
     assert statuses[2].id == MAINTENANCE_STATUS_ID and statuses[2].code == MAINTENANCE_STATUS_CODE
     assert statuses[3].id == STOPPED_STATUS_ID and statuses[3].code == STOPPED_STATUS_CODE
+
+def test_initialise_reported_status_repeated(db_session):
+    query = select(func.count()).select_from(ReportedStatus)
+    record_count = db_session.scalar(query)
+    assert record_count == 0
+
+    initialise_reported_status(db_session)
+    initialise_reported_status(db_session)
+
+    query = select(func.count()).select_from(ReportedStatus)
+    record_count = db_session.scalar(query)
+    assert record_count == 4
