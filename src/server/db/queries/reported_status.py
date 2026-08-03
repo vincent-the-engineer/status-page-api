@@ -14,6 +14,18 @@ DEGRADED_STATUS_CODE: Final[str] = "DEGRADED"
 MAINTENANCE_STATUS_CODE: Final[str] = "MAINTENANCE"
 STOPPED_STATUS_CODE: Final[str] = "STOPPED"
 
+def get_reported_status_id(code: str) -> int:
+    upper_code = code.upper()
+    if upper_code == HEALTHY_STATUS_CODE:
+        return HEALTHY_STATUS_ID
+    if upper_code == DEGRADED_STATUS_CODE:
+        return DEGRADED_STATUS_ID
+    if upper_code == MAINTENANCE_STATUS_CODE:
+        return MAINTENANCE_STATUS_ID
+    if upper_code == STOPPED_STATUS_CODE:
+        return STOPPED_STATUS_ID
+    return None
+
 def initialise_reported_status(session: Session) -> None:
     STATUSES = [
         {
