@@ -2,6 +2,7 @@ import pytest
 from sqlalchemy import select, func
 
 from server.db.queries.reported_status import (
+    get_reported_status_id,
     initialise_reported_status,
     HEALTHY_STATUS_ID,
     DEGRADED_STATUS_ID,
@@ -14,6 +15,14 @@ from server.db.queries.reported_status import (
 )
 from server.db.schema.tables.reported_status import ReportedStatus
 
+
+def test_get_reported_status_id():
+    assert get_reported_status_id(HEALTHY_STATUS_CODE) == HEALTHY_STATUS_ID
+    assert get_reported_status_id(DEGRADED_STATUS_CODE) == DEGRADED_STATUS_ID
+    assert get_reported_status_id(MAINTENANCE_STATUS_CODE) == MAINTENANCE_STATUS_ID
+    assert get_reported_status_id(STOPPED_STATUS_CODE) == STOPPED_STATUS_ID
+    assert get_reported_status_id("test") is None
+    assert get_reported_status_id("healthy") == HEALTHY_STATUS_ID
 
 def test_initialise_reported_status(db_session):
     query = select(func.count()).select_from(ReportedStatus)
