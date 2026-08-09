@@ -11,7 +11,7 @@ from server.db.schema.base import Base
 MAX_NAME_LENGTH = 50
 
 class Service(Base):
-    __tablename__ = "services"
+    __tablename__ = "service"
     id: Mapped[uuid4] = mapped_column(
         UUID,
         primary_key=True,
@@ -19,14 +19,14 @@ class Service(Base):
     )
     name: Mapped[str] = mapped_column(String(MAX_NAME_LENGTH))
     user_id: Mapped[uuid4] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("user.id", ondelete="CASCADE"),
     )
     owner: Mapped["User"] = relationship()
     # dependencies: Mapped[list["Service"]] = relationship(
     #     "Service",
-    #     secondary="service_dependencies",
-    #     primaryjoin="Service.id == service_dependencies.c.service_id",
-    #     secondaryjoin="Service.id == service_dependencies.c.dependency_id",
+    #     secondary="service_dependency",
+    #     primaryjoin="Service.id == service_dependency.c.service_id",
+    #     secondaryjoin="Service.id == service_dependency.c.dependency_id",
     #     backref="required_by",
     #     # Ensures the entries in the association table are cleaned up
     #     cascade="all, delete",

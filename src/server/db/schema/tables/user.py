@@ -13,7 +13,7 @@ from server.db.schema.base import Base
 MAX_EMAIL_LENGTH = 254
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "user"
     id: Mapped[uuid4] = mapped_column(
         UUID,
         primary_key=True,

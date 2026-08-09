@@ -8,7 +8,7 @@
 # MAX_NAME_LENGTH = 50
 
 # class ServiceDependency(Base):
-#     __tablename__ = "service_dependencies"
+#     __tablename__ = "service_dependency"
 #     service_id: Mapped[uuid4] = mapped_column(
 #         ForeignKey("services.id", ondelete="CASCADE"),
 #         primary_key=True,
