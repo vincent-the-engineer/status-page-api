@@ -21,7 +21,6 @@ class Service(Base):
     user_id: Mapped[uuid4] = mapped_column(
         ForeignKey("user.id", ondelete="CASCADE"),
     )
-    owner: Mapped["User"] = relationship()
     # dependencies: Mapped[list["Service"]] = relationship(
     #     "Service",
     #     secondary="service_dependency",
@@ -38,3 +37,4 @@ class Service(Base):
         server_default=func.now(),
         onupdate=func.now(),
     )
+    user: Mapped["User"] = relationship()
