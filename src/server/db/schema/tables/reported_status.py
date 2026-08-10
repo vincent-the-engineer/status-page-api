@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.sql.expression import func
 
 from server.db.schema.base import Base
 
@@ -21,4 +24,11 @@ class ReportedStatus(Base):
         String(_MAX_NAME_LENGTH),
         nullable=False,
         unique=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        server_default=func.now(),
+        onupdate=func.now(),
     )
