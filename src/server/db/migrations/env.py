@@ -11,6 +11,7 @@ from server.db.schema.base import Base
 from server.db.schema.tables.reported_status import ReportedStatus
 from server.db.schema.tables.user import User
 from server.db.schema.tables.service import Service
+from server.db.schema.tables.service_status import ServiceStatus
 
 
 # this is the Alembic Config object, which provides
