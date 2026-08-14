@@ -18,7 +18,7 @@ class ServiceStatus(Base):
     service_id: Mapped[uuid4] = mapped_column(
         ForeignKey("service.id", ondelete="CASCADE"),
     )
-    reported_status_id: Mapped[uuid4] = mapped_column(
+    reported_status_id: Mapped[int] = mapped_column(
         ForeignKey("reported_status.id", ondelete="CASCADE"),
     )
     created_at: Mapped[datetime] = mapped_column(
