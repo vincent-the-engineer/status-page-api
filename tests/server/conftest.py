@@ -52,7 +52,8 @@ def db_connection() -> Iterator[Connection]:
     yield connection
 
     # Roll back the top-level transaction.
-    transaction.rollback()
+    if transaction.is_active:
+        transaction.rollback()
     connection.close()
 
 @pytest.fixture(scope="function")
