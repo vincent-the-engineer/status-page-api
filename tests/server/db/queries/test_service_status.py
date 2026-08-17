@@ -51,3 +51,26 @@ def test_insert_service_status(db_session):
     queried_service_status = db_session.query(ServiceStatus).filter_by(service_id=service.id).first()
     assert queried_service_status is not None
     assert queried_service_status.reported_status_id == status_id
+
+def test_insert_service_status_invalid_service_id(db_session):
+    query = select(func.count()).select_from(ServiceStatus)
+    record_count = db_session.scalar(query)
+    assert record_count == 0
+
+    initialise_reported_status(db_session)
+
+    email = "john@example.com"
+    api_key = "abcde"
+    user = User(email=email, api_key=api_key)
+    db_session.add(user)
+    db_session.flush()
+
+    name = "Service 1"
+    service = Service(user_id=user.id, name=name)
+    db_session.add(service)
+    db_session.flush()
+
+    random_id = uuid4()
+    status_id = HEALTHY_STATUS_ID
+    with pytest.raises(IntegrityError):
+        service_status = insert_service_status(db_session, random_id, status_id)
