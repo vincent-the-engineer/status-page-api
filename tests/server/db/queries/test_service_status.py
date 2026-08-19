@@ -96,3 +96,44 @@ def test_insert_service_status_invalid_reported_status_id(db_session):
     status_id = 9999
     with pytest.raises(IntegrityError):
         service_status = insert_service_status(db_session, service.id, status_id)
+
+def test_delete_service_cascade_delete(db_session):
+    query = select(func.count()).select_from(ServiceStatus)
+    record_count = db_session.scalar(query)
+    assert record_count == 0
+
+    initialise_reported_status(db_session)
+
+    email = "john@example.com"
+    api_key = "abcde"
+    user = User(email=email, api_key=api_key)
+    db_session.add(user)
+    db_session.flush()
+
+    name1 = "Service 1"
+    service1 = Service(user_id=user.id, name=name1)
+    db_session.add(service1)
+    name2 = "Service 2"
+    service2 = Service(user_id=user.id, name=name2)
+    db_session.add(service2)
+    db_session.flush()
+
+    status_id1 = HEALTHY_STATUS_ID
+    insert_service_status(db_session, service1.id, status_id1)
+    status_id2 = DEGRADED_STATUS_ID
+    insert_service_status(db_session, service2.id, status_id2)
+
+    query = select(func.count()).select_from(ServiceStatus)
+    record_count = db_session.scalar(query)
+    assert record_count == 2
+
+    db_session.delete(service1)
+    db_session.flush()
+
+    query = select(func.count()).select_from(ServiceStatus)
+    record_count = db_session.scalar(query)
+    assert record_count == 1
+
+    service_status = db_session.query(ServiceStatus).filter_by(service_id=service2.id).first()
+    assert service_status is not None
+    assert service_status.reported_status_id == status_id2
