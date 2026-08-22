@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import uuid4
 
 import pytest
@@ -12,6 +13,7 @@ from server.db.queries.reported_status import (
     STOPPED_STATUS_ID,
 )
 from server.db.queries.service_status import (
+    get_last_service_status,
     insert_service_status,
 )
 from server.db.schema.tables.reported_status import ReportedStatus
@@ -19,6 +21,56 @@ from server.db.schema.tables.service import Service
 from server.db.schema.tables.service_status import ServiceStatus
 from server.db.schema.tables.user import User
 
+
+def test_get_last_service_status(db_session):
+    query = select(func.count()).select_from(ServiceStatus)
+    record_count = db_session.scalar(query)
+    assert record_count == 0
+
+    initialise_reported_status(db_session)
+
+    email = "john@example.com"
+    api_key = "abcde"
+    user = User(email=email, api_key=api_key)
+    db_session.add(user)
+    db_session.flush()
+
+    name1 = "Service 1"
+    service1 = Service(user_id=user.id, name=name1)
+    db_session.add(service1)
+    name2 = "Service 2"
+    service2 = Service(user_id=user.id, name=name2)
+    db_session.add(service2)
+    db_session.flush()
+
+    status_id1 = DEGRADED_STATUS_ID
+    service_status1 = ServiceStatus(
+        service_id=service1.id,
+        reported_status_id=status_id1,
+        created_at=datetime(2026, 1, 1, 12, 0, 0)
+    )
+    db_session.add(service_status1)
+    db_session.flush()
+    status_id2 = HEALTHY_STATUS_ID
+    service_status2 = ServiceStatus(
+        service_id=service1.id,
+        reported_status_id=status_id2,
+        created_at=datetime(2026, 1, 1, 12, 0, 1)
+    )
+    db_session.add(service_status2)
+    db_session.flush()
+
+    query = select(func.count()).select_from(ServiceStatus)
+    record_count = db_session.scalar(query)
+    assert record_count == 2
+    assert service_status1.created_at < service_status2.created_at
+
+    service_status = get_last_service_status(db_session, service1.id)
+    assert service_status is not None
+    assert service_status.reported_status_id == status_id2
+
+    service_status = get_last_service_status(db_session, service2.id)
+    assert service_status is None
 
 def test_insert_service_status(db_session):
     query = select(func.count()).select_from(ServiceStatus)
