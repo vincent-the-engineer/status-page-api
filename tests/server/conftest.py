@@ -6,11 +6,13 @@ from pathlib import Path
 import pytest
 from alembic.config import Config
 from alembic import command
+from fastapi.testclient import TestClient
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Connection
 from sqlalchemy.orm import sessionmaker, Session
 
+from server.api.api import app
 import server.db.database as db
 
 
@@ -73,3 +75,8 @@ def db_session(db_connection: Connection) -> Iterator[Session]:
     yield session
 
     session.close()
+
+@pytest.fixture(scope="session")
+def api_client() -> Iterator[TestClient]:
+    with TestClient(app) as client:
+        yield client
